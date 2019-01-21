@@ -1,4 +1,4 @@
-# SALMON
+# SALMON 🐟
 SALMON: Survival Analysis Learning with Multi-Omics Neural Networks
 
 ### SALMON architecture with the implementation of Cox proportional hazards regression networks:
