@@ -4,6 +4,9 @@ SALMON: Survival Analysis Learning with Multi-Omics Neural Networks
 ### SALMON architecture with the implementation of Cox proportional hazards regression networks:
 ![SALMON Architecture](figures/Figure1.png)
 
+### Publication:
+Huang, Zhi, et al. "SALMON: Survival Analysis Learning with Multi-Omics Neural Networks on Breast Cancer." Frontiers in Genetics 10 (2019): 166. [Link](https://www.frontiersin.org/articles/10.3389/fgene.2019.00166/abstract)
+
 
 ## 1. Installation
 * Download Anaconda from https://www.anaconda.com/download/#linux/ with python 3 version.
