@@ -5,7 +5,7 @@
 """
 
 import sys, os
-sys.path.append("/home/zhihuan/Documents/SALMON")
+sys.path.append("/home/zhihuan/Documents/SALMON/model")
 import SALMON
 import pandas as pd
 import argparse
