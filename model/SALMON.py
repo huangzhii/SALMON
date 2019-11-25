@@ -29,94 +29,91 @@ from tqdm import tqdm
 import gc
 import copy
 
-len_of_RNAseq = 57
-len_of_miRNAseq = 12
-len_of_cnv = 1
-len_of_tmb = 1
-len_of_clinical = 3
 
 class SALMON(nn.Module):
-    def __init__(self, input_dim, dropout_rate, label_dim):
+    def __init__(self, input_dim, dropout_rate, length_of_data, label_dim):
         super(SALMON, self).__init__()
+        
+        self.length_of_data = length_of_data
         hidden1 = 8
         hidden2 = 4
         
-        if input_dim == len_of_RNAseq: # mRNAseq
+        if input_dim == length_of_data['mRNAseq']: # mRNAseq
             self.encoder1 = nn.Sequential(nn.Linear(input_dim, hidden1),nn.Sigmoid())
             self.classifier = nn.Sequential(nn.Linear(hidden1, label_dim),nn.Sigmoid())
             
-        if input_dim == len_of_miRNAseq: # miRNAseq
+        if input_dim == length_of_data['miRNAseq']: # miRNAseq
             self.encoder2 = nn.Sequential(nn.Linear(input_dim, hidden2),nn.Sigmoid())
             self.classifier = nn.Sequential(nn.Linear(hidden2, label_dim),nn.Sigmoid())
             
-        if input_dim == len_of_RNAseq + len_of_miRNAseq: # mRNAseq + miRNAseq
-            self.encoder1 = nn.Sequential(nn.Linear(len_of_RNAseq, hidden1),nn.Sigmoid())
-            self.encoder2 = nn.Sequential(nn.Linear(len_of_miRNAseq, hidden2),nn.Sigmoid())
+        if input_dim == length_of_data['mRNAseq'] + length_of_data['miRNAseq']: # mRNAseq + miRNAseq
+            self.encoder1 = nn.Sequential(nn.Linear(length_of_data['mRNAseq'], hidden1),nn.Sigmoid())
+            self.encoder2 = nn.Sequential(nn.Linear(length_of_data['miRNAseq'], hidden2),nn.Sigmoid())
             self.classifier = nn.Sequential(nn.Linear(hidden1 + hidden2, label_dim),nn.Sigmoid())
             
-        if input_dim == len_of_RNAseq + len_of_miRNAseq + len_of_cnv + len_of_tmb: # mRNAseq + miRNAseq + CNB + TMB
-            hidden_cnv, hidden_tmb = len_of_cnv, len_of_tmb
-            self.encoder1 = nn.Sequential(nn.Linear(len_of_RNAseq, hidden1),nn.Sigmoid())
-            self.encoder2 = nn.Sequential(nn.Linear(len_of_miRNAseq, hidden2),nn.Sigmoid())
+        if input_dim == length_of_data['mRNAseq'] + length_of_data['miRNAseq'] + length_of_data['CNB'] + length_of_data['TMB']: # mRNAseq + miRNAseq + CNB + TMB
+            hidden_cnv, hidden_tmb = length_of_data['CNB'], length_of_data['TMB']
+            self.encoder1 = nn.Sequential(nn.Linear(length_of_data['mRNAseq'], hidden1),nn.Sigmoid())
+            self.encoder2 = nn.Sequential(nn.Linear(length_of_data['miRNAseq'], hidden2),nn.Sigmoid())
             self.classifier = nn.Sequential(nn.Linear(hidden1 + hidden2 + hidden_cnv + hidden_tmb, label_dim),nn.Sigmoid())
                         
-        if input_dim == len_of_RNAseq + len_of_miRNAseq + len_of_cnv + len_of_tmb + len_of_clinical: # mRNAseq + miRNAseq + CNB + TMB + clinical
-            hidden_cnv, hidden_tmb, hidden_clinical = len_of_cnv, len_of_tmb, len_of_clinical
-            self.encoder1 = nn.Sequential(nn.Linear(len_of_RNAseq, hidden1),nn.Sigmoid())
-            self.encoder2 = nn.Sequential(nn.Linear(len_of_miRNAseq, hidden2),nn.Sigmoid())
+        if input_dim == length_of_data['mRNAseq'] + length_of_data['miRNAseq'] + length_of_data['CNB'] + length_of_data['TMB'] + length_of_data['clinical']: # mRNAseq + miRNAseq + CNB + TMB + clinical
+            hidden_cnv, hidden_tmb, hidden_clinical = length_of_data['CNB'], length_of_data['TMB'], length_of_data['clinical']
+            self.encoder1 = nn.Sequential(nn.Linear(length_of_data['mRNAseq'], hidden1),nn.Sigmoid())
+            self.encoder2 = nn.Sequential(nn.Linear(length_of_data['miRNAseq'], hidden2),nn.Sigmoid())
             self.classifier = nn.Sequential(nn.Linear(hidden1 + hidden2 + \
                                             hidden_cnv + hidden_tmb + hidden_clinical, label_dim),nn.Sigmoid())
             
-        if input_dim == len_of_cnv + len_of_tmb + len_of_clinical: # CNB + TMB + clinical
-            hidden_cnv, hidden_tmb, hidden_clinical = len_of_cnv, len_of_tmb, len_of_clinical
+        if input_dim == length_of_data['CNB'] + length_of_data['TMB'] + length_of_data['clinical']: # CNB + TMB + clinical
+            hidden_cnv, hidden_tmb, hidden_clinical = length_of_data['CNB'], length_of_data['TMB'], length_of_data['clinical']
             self.classifier = nn.Sequential(nn.Linear(hidden_cnv + hidden_tmb + hidden_clinical, label_dim),nn.Sigmoid())
         
-        if input_dim == len_of_RNAseq + len_of_miRNAseq + len_of_clinical: # mRNAseq + miRNAseq + clinical
-            hidden_clinical = len_of_clinical
-            self.encoder1 = nn.Sequential(nn.Linear(len_of_RNAseq, hidden1),nn.Sigmoid())
-            self.encoder2 = nn.Sequential(nn.Linear(len_of_miRNAseq, hidden2),nn.Sigmoid())
+        if input_dim == length_of_data['mRNAseq'] + length_of_data['miRNAseq'] + length_of_data['clinical']: # mRNAseq + miRNAseq + clinical
+            hidden_clinical = length_of_data['clinical']
+            self.encoder1 = nn.Sequential(nn.Linear(length_of_data['mRNAseq'], hidden1),nn.Sigmoid())
+            self.encoder2 = nn.Sequential(nn.Linear(length_of_data['miRNAseq'], hidden2),nn.Sigmoid())
             self.classifier = nn.Sequential(nn.Linear(hidden1 + hidden2 + \
                                             hidden_clinical, label_dim),nn.Sigmoid())
         
     def forward(self, x):
         input_dim = x.shape[1]
         x_d = None
-        if input_dim == len_of_RNAseq: # mRNAseq
+        if input_dim == self.length_of_data['mRNAseq']: # mRNAseq
             code1 = self.encoder1(x)
             lbl_pred = self.classifier(code1) # predicted label
             code = code1
             
-        if input_dim == len_of_miRNAseq: # miRNAseq
+        if input_dim == self.length_of_data['miRNAseq']: # miRNAseq
             code2 = self.encoder2(x)
             lbl_pred = self.classifier(code2) # predicted label
             code = code2
             
-        if input_dim == len_of_RNAseq + len_of_miRNAseq: # mRNAseq + miRNAseq
-            code1 = self.encoder1(x[:,0:len_of_RNAseq])
-            code2 = self.encoder2(x[:,len_of_RNAseq:])
+        if input_dim == self.length_of_data['mRNAseq'] + self.length_of_data['miRNAseq']: # mRNAseq + miRNAseq
+            code1 = self.encoder1(x[:,0:self.length_of_data['mRNAseq']])
+            code2 = self.encoder2(x[:,self.length_of_data['mRNAseq']:])
             lbl_pred = self.classifier(torch.cat((code1, code2), 1)) # predicted label
             code = torch.cat((code1, code2), 1)
             
-        if input_dim == len_of_RNAseq + len_of_miRNAseq + len_of_cnv + len_of_tmb: # mRNAseq + miRNAseq + CNB + TMB
-            code1 = self.encoder1(x[:,0:len_of_RNAseq])
-            code2 = self.encoder2(x[:,len_of_RNAseq: (len_of_RNAseq + len_of_miRNAseq)])
-            lbl_pred = self.classifier(torch.cat((code1, code2, x[:,(len_of_RNAseq + len_of_miRNAseq):]), 1)) # predicted label
+        if input_dim == self.length_of_data['mRNAseq'] + self.length_of_data['miRNAseq'] + self.length_of_data['CNB'] + self.length_of_data['TMB']: # mRNAseq + miRNAseq + CNB + TMB
+            code1 = self.encoder1(x[:,0:self.length_of_data['mRNAseq']])
+            code2 = self.encoder2(x[:,self.length_of_data['mRNAseq']: (self.length_of_data['mRNAseq'] + self.length_of_data['miRNAseq'])])
+            lbl_pred = self.classifier(torch.cat((code1, code2, x[:,(self.length_of_data['mRNAseq'] + self.length_of_data['miRNAseq']):]), 1)) # predicted label
             code = torch.cat((code1, code2), 1)
                         
-        if input_dim == len_of_RNAseq + len_of_miRNAseq + len_of_cnv + len_of_tmb + len_of_clinical: # mRNAseq + miRNAseq + CNB + TMB + clinical
-            code1 = self.encoder1(x[:,0:len_of_RNAseq])
-            code2 = self.encoder2(x[:,len_of_RNAseq: (len_of_RNAseq + len_of_miRNAseq)])
-            lbl_pred = self.classifier(torch.cat((code1, code2, x[:, (len_of_RNAseq + len_of_miRNAseq):]), 1)) # predicted label
+        if input_dim == self.length_of_data['mRNAseq'] + self.length_of_data['miRNAseq'] + self.length_of_data['CNB'] + self.length_of_data['TMB'] + self.length_of_data['clinical']: # mRNAseq + miRNAseq + CNB + TMB + clinical
+            code1 = self.encoder1(x[:,0:self.length_of_data['mRNAseq']])
+            code2 = self.encoder2(x[:,self.length_of_data['mRNAseq']: (self.length_of_data['mRNAseq'] + self.length_of_data['miRNAseq'])])
+            lbl_pred = self.classifier(torch.cat((code1, code2, x[:, (self.length_of_data['mRNAseq'] + self.length_of_data['miRNAseq']):]), 1)) # predicted label
             code = torch.cat((code1, code2), 1)
             
-        if input_dim == len_of_cnv + len_of_tmb + len_of_clinical: # CNB + TMB + clinical
+        if input_dim == self.length_of_data['CNB'] + self.length_of_data['TMB'] + self.length_of_data['clinical']: # CNB + TMB + clinical
             lbl_pred = self.classifier(x) # predicted label
             code = torch.FloatTensor([0])
             
-        if input_dim == len_of_RNAseq + len_of_miRNAseq + len_of_clinical: # mRNAseq + miRNAseq + clinical
-            code1 = self.encoder1(x[:,0:len_of_RNAseq])
-            code2 = self.encoder2(x[:,len_of_RNAseq: (len_of_RNAseq + len_of_miRNAseq)])
-            lbl_pred = self.classifier(torch.cat((code1, code2, x[:, (len_of_RNAseq + len_of_miRNAseq):]), 1)) # predicted label
+        if input_dim == self.length_of_data['mRNAseq'] + self.length_of_data['miRNAseq'] + self.length_of_data['clinical']: # mRNAseq + miRNAseq + clinical
+            code1 = self.encoder1(x[:,0:self.length_of_data['mRNAseq']])
+            code2 = self.encoder2(x[:,self.length_of_data['mRNAseq']: (self.length_of_data['mRNAseq'] + self.length_of_data['miRNAseq'])])
+            lbl_pred = self.classifier(torch.cat((code1, code2, x[:, (self.length_of_data['mRNAseq'] + self.length_of_data['miRNAseq']):]), 1)) # predicted label
             code = torch.cat((code1, code2), 1)
             
         return x_d, code, lbl_pred
@@ -179,7 +176,7 @@ def frobenius_norm_loss(a, b):
     loss = torch.sqrt(torch.sum(torch.abs(a-b)**2))
     return loss
 
-def test(model, datasets, whichset, batch_size, cuda, verbose):
+def test(model, datasets, whichset, length_of_data, batch_size, cuda, verbose):
     x = datasets[whichset]['x']
     e = datasets[whichset]['e']
     t = datasets[whichset]['t']
@@ -248,7 +245,7 @@ def init_weights(m):
         m.weight.data.normal_(0, 0.5)
     
 def train(datasets, num_epochs, batch_size, learning_rate, dropout_rate,
-                        lambda_1, cuda, measure, verbose):
+                        lambda_1, length_of_data, cuda, measure, verbose):
     
 
     x = datasets['train']['x']
@@ -272,7 +269,7 @@ def train(datasets, num_epochs, batch_size, learning_rate, dropout_rate,
     torch.manual_seed(666)
     random.seed(666)
     
-    model = SALMON(nodes_in, dropout_rate, label_dim = 1)
+    model = SALMON(nodes_in, dropout_rate, length_of_data, label_dim = 1)
         
     if cuda:
         model.cuda()
@@ -373,7 +370,7 @@ def train(datasets, num_epochs, batch_size, learning_rate, dropout_rate,
             acc_train_all.append(acc_train)
             whichset = 'test'
             code_validation, loss_nn_sum, acc_test, pvalue_pred, c_index_pred, lbl_pred_all, OS_event, OS = \
-                test(model, datasets, whichset, batch_size, cuda, verbose)
+                test(model, datasets, whichset, length_of_data, batch_size, cuda, verbose)
                 
             c_index_list['test'].append(c_index_pred)
     return(model, loss_nn_all, pvalue_all, c_index_all, c_index_list, acc_train_all, code_output)
