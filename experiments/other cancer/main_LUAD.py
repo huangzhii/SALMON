@@ -18,7 +18,6 @@ from torchvision import transforms
 from torch.autograd import Variable
 from collections import Counter
 import pandas as pd
-import matplotlib.pyplot as plt
 import math
 import random
 from imblearn.over_sampling import RandomOverSampler
@@ -33,7 +32,10 @@ import pickle
 import time
 from sklearn.model_selection import KFold
 from sklearn import preprocessing
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+plt.ioff()
 
 
 def parse_args():
@@ -51,17 +53,16 @@ def parse_args():
 if __name__=='__main__':
     torch.cuda.empty_cache()
     args = parse_args()
-    plt.ioff()
 
     # model file
     num_epochs = args.num_epochs
     batch_size = args.batch_size
-    learning_rate_range = 10**np.arange(-3,-1,0.5)
+    learning_rate_range = 10**np.arange(-4,-1,0.3)
     cuda = True
     verbose = 0
     measure_while_training = True
     dropout_rate = 0
-    lambda_1 = 1e-5 # L1
+    lambda_1 = 1e-6 # L1
     
     # 5-fold data
     tempdata = {}
@@ -78,47 +79,51 @@ if __name__=='__main__':
     
     
     data = {}
+    data['x'] = pd.concat((tempdata['mRNAseq_eigengene'], tempdata['miRNAseq_eigengene'], tempdata['CNB']['log2_LENGTH_KB'], tempdata['TMB']['All_TMB'], tempdata['clinical'][['gender','age_at_initial_pathologic_diagnosis']]), axis = 1).values.astype(np.double)
+    all_column_names = ['mRNAseq_' + str(i+1) for i in range(tempdata['mRNAseq_eigengene'].shape[1])] + \
+                            ['miRNAseq_' + str(i+1) for i in range(tempdata['miRNAseq_eigengene'].shape[1])] + \
+                            ['CNB', 'TMB', 'GENDER', 'AGE']
+    print('perform min-max scaler on all input features')
+    scaler = preprocessing.MinMaxScaler()
+    scaler.fit(data['x'])
+    data['x'] = scaler.transform(data['x'])
+    
     data['e'] = tempdata['clinical']['vital_status'].values.astype(np.int32)
     data['t'] = tempdata['clinical']['survival_days'].values.astype(np.double)
     
     if args.dataset == 1:
         dataset_subset = "1_RNAseq"
-        data['x'] = tempdata['mRNAseq_eigengene'].values.astype(np.double)
         data['column_names'] = ['mRNAseq_' + str(i+1) for i in range(tempdata['mRNAseq_eigengene'].shape[1])]
         
     elif args.dataset == 2:
         dataset_subset = "2_miRNAseq"
-        data['x'] = tempdata['miRNAseq_eigengene'].values.astype(np.double)
         data['column_names'] = ['miRNAseq_' + str(i+1) for i in range(tempdata['miRNAseq_eigengene'].shape[1])]
         
     elif args.dataset == 3:
         dataset_subset = "3_RNAseq+miRNAseq"
-        data['x'] = pd.concat((tempdata['mRNAseq_eigengene'], tempdata['miRNAseq_eigengene']), axis = 1).values.astype(np.double)
         data['column_names'] = ['mRNAseq_' + str(i+1) for i in range(tempdata['mRNAseq_eigengene'].shape[1])] + \
                                 ['miRNAseq_' + str(i+1) for i in range(tempdata['miRNAseq_eigengene'].shape[1])]
     elif args.dataset == 4:
-        dataset_subset = "4_RNAseq+miRNAseq+cnv+tmb"
-        data['x'] = pd.concat((tempdata['mRNAseq_eigengene'], tempdata['miRNAseq_eigengene'], tempdata['CNB']['log2_LENGTH_KB'], tempdata['TMB']['All_TMB']), axis = 1).values.astype(np.double)
+        dataset_subset = "4_RNAseq+miRNAseq+cnb+tmb"
         data['column_names'] = ['mRNAseq_' + str(i+1) for i in range(tempdata['mRNAseq_eigengene'].shape[1])] + \
                                 ['miRNAseq_' + str(i+1) for i in range(tempdata['miRNAseq_eigengene'].shape[1])] + \
                                 ['CNB', 'TMB']
     elif args.dataset == 5:
         dataset_subset = "5_RNAseq+miRNAseq+clinical"
-        data['x'] = pd.concat((tempdata['mRNAseq_eigengene'], tempdata['miRNAseq_eigengene'], tempdata['clinical'][['gender','age_at_initial_pathologic_diagnosis']]), axis = 1).values.astype(np.double)
         data['column_names'] = ['mRNAseq_' + str(i+1) for i in range(tempdata['mRNAseq_eigengene'].shape[1])] + \
                                 ['miRNAseq_' + str(i+1) for i in range(tempdata['miRNAseq_eigengene'].shape[1])] + \
                                 ['GENDER', 'AGE']
     elif args.dataset == 6:
-        dataset_subset = "6_cnv+tmb+clinical"
-        data['x'] = pd.concat((tempdata['CNB']['log2_LENGTH_KB'], tempdata['TMB']['All_TMB'], tempdata['clinical'][['gender','age_at_initial_pathologic_diagnosis']]), axis = 1).values.astype(np.double)
+        dataset_subset = "6_cnb+tmb+clinical"
         data['column_names'] = ['CNB', 'TMB', 'GENDER', 'AGE']
         
     elif args.dataset == 7:
-        dataset_subset = "7_RNAseq+miRNAseq+cnv+tmb+clinical"
-        data['x'] = pd.concat((tempdata['mRNAseq_eigengene'], tempdata['miRNAseq_eigengene'], tempdata['CNB']['log2_LENGTH_KB'], tempdata['TMB']['All_TMB'], tempdata['clinical'][['gender','age_at_initial_pathologic_diagnosis']]), axis = 1).values.astype(np.double)
+        dataset_subset = "7_RNAseq+miRNAseq+cnb+tmb+clinical"
         data['column_names'] = ['mRNAseq_' + str(i+1) for i in range(tempdata['mRNAseq_eigengene'].shape[1])] + \
                                 ['miRNAseq_' + str(i+1) for i in range(tempdata['miRNAseq_eigengene'].shape[1])] + \
                                 ['CNB', 'TMB', 'GENDER', 'AGE']
+    print('subsetting data...')
+    data['x'] = data['x'][:, [i for i, c in enumerate(all_column_names) if c in data['column_names']]]
 
     kf = KFold(n_splits=5, shuffle=True, random_state=666)
     datasets_5folds = {}
@@ -174,7 +179,7 @@ if __name__=='__main__':
             plt.xlabel("epochs")
             plt.ylabel("Concordance index")
             plt.savefig(results_dir_dataset + "/convergence_%02d_lr=%.2E.png" % (j, lr),dpi=300)
-            
+            plt.close()
             code_test, loss_nn_sum, acc_test, pvalue_pred, c_index_pred, lbl_pred_all, OS_event_test, OS_test = \
                 SALMON.test(model, datasets, 'test', length_of_data, batch_size, cuda, verbose)
             ci_list.append(c_index_pred)
@@ -237,6 +242,6 @@ if __name__=='__main__':
         plt.xlabel("epochs")
         plt.ylabel("Concordance index")
         plt.savefig(results_dir_dataset + "/convergence.png",dpi=300)
-        
+        plt.close()
 
 
