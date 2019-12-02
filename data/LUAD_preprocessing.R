@@ -190,6 +190,14 @@ lmQCM_object <- lmQCM(dataset[['mRNAseq']], gamma = 0.7, t = 1, lambda = 1, beta
                        minClusterSize = 10, CCmethod = "spearman", normalization = F)
 dataset[['mRNAseq_eigengene_matrix']] = t(lmQCM_object@eigengene.matrix)
 
+clusters.names = lmQCM_object@clusters.names
+text.output = data.frame(row.names = 1:length(clusters.names))
+for (i in 1:length(clusters.names)){
+  text.output[i,1] = paste(unlist(clusters.names[i]), collapse = ', ')
+}
+write.csv(text.output, "LUAD/multiomics_preprocessing_results/mRNAseq_modules.csv")
+
+
 lmQCM_object <- lmQCM(dataset[['miRNAseq']], gamma = 0.4, t = 1, lambda = 1, beta = 0.6,
                       minClusterSize = 4, CCmethod = "spearman", normalization = F)
 dataset[['miRNAseq_eigengene_matrix']] = t(lmQCM_object@eigengene.matrix)
