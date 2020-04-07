@@ -1,0 +1,31 @@
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--hyperparams', help='hyperparams .json file to load')
+    parser.add_argument('--box_optunity', default='/home/zhihuan/Documents/20181115_Multiomic_AutoEncoder/experiments/mac/hyperparams_box_constraints.json', help='Filename to box constraints dictionary pickle file')
+    parser.add_argument('--dataset_dir', default='/home/zhihuan/Documents/20181115_Multiomic_AutoEncoder/Datasets_Multiomics/BRCA/Data_Preprocessing/Processed', help="datasets")
+    parser.add_argument('--num_epochs', type=int, default=100, help="Number of epochs to train for. Default: 300")
+    parser.add_argument('--measure_while_training', action='store_true', default=False, help='disables measure while training (make program faster)')
+    parser.add_argument('--batch_size', type=int, default=256, help="Number of batches to train/test for. Default: 256")
+    parser.add_argument('--dataset', type=int, default=2, help="1: RNAseq only; 2. miRNAseq only; 3. RNAseq+miRNAseq; 4. RNAseq+miRNAseq+CNV+TMB; 5. All + Clinical")
+    parser.add_argument('--nocuda', action='store_true', default=False, help='disables CUDA training')
+    parser.add_argument('--verbose', default=1, type=int)
+    parser.add_argument('--results_dir', default='/home/zhihuan/Documents/20181115_Multiomic_AutoEncoder/experiments/mac/Results/20181128_data_583_new_train_test_sigmoid', help="results dir")
+    return parser.parse_args()
+
+if __name__=='__main__':
+    torch.cuda.empty_cache()
+    args = parse_args()
+    
+    # model file
+    lambda_1 = 0#1e4
+    dropout_rate, lambda_2, lambda_3 = 0, 0, 0
+    num_epochs = args.num_epochs
+    batch_size = args.batch_size
+    learning_rate_range = 10**np.arange(-5,-1,0.3)
+    cuda = True
+    verbose = 0
+    measure_while_training = True
+    
+    dropout_rate = 0
+    lambda_2 = 1e-5 # L1

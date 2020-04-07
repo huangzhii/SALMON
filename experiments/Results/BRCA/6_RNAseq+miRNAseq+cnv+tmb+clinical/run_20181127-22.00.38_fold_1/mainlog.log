@@ -1,0 +1,165 @@
+INFO:root:[1/10] current lr: 1.0000E-04
+INFO:root:current concordance index: 0.3611428571
+
+INFO:root:[2/10] current lr: 1.9953E-04
+INFO:root:current concordance index: 0.4605714286
+
+INFO:root:[3/10] current lr: 3.9811E-04
+INFO:root:current concordance index: 0.5942857143
+
+INFO:root:[4/10] current lr: 7.9433E-04
+INFO:root:current concordance index: 0.7302857143
+
+INFO:root:[5/10] current lr: 1.5849E-03
+INFO:root:current concordance index: 0.7508571429
+
+INFO:root:[6/10] current lr: 3.1623E-03
+INFO:root:current concordance index: 0.7028571429
+
+INFO:root:[7/10] current lr: 6.3096E-03
+INFO:root:current concordance index: 0.6685714286
+
+INFO:root:[8/10] current lr: 1.2589E-02
+INFO:root:current concordance index: 0.6422857143
+
+INFO:root:[9/10] current lr: 2.5119E-02
+INFO:root:current concordance index: 0.6331428571
+
+INFO:root:[10/10] current lr: 5.0119E-02
+INFO:root:current concordance index: 0.6457142857
+
+INFO:root:Optimal learning rate: 1.5849E-03, optimal c-index: 0.7508571429
+INFO:root:[Final] Apply model to training set: c-index: 0.7485195724, p-value: 2.0974333570e-05
+INFO:root:[Final] Apply model to testing set: c-index: 0.7508571429, p-value: 3.6087883392e-02
+INFO:root:[1/10] current lr: 1.0000E-04
+INFO:root:current concordance index: 0.6800472255
+
+INFO:root:[2/10] current lr: 1.9953E-04
+INFO:root:current concordance index: 0.7178276269
+
+INFO:root:[3/10] current lr: 3.9811E-04
+INFO:root:current concordance index: 0.7284533648
+
+INFO:root:[4/10] current lr: 7.9433E-04
+INFO:root:current concordance index: 0.6906729634
+
+INFO:root:[5/10] current lr: 1.5849E-03
+INFO:root:current concordance index: 0.6894923259
+
+INFO:root:[6/10] current lr: 3.1623E-03
+INFO:root:current concordance index: 0.6753246753
+
+INFO:root:[7/10] current lr: 6.3096E-03
+INFO:root:current concordance index: 0.6528925620
+
+INFO:root:[8/10] current lr: 1.2589E-02
+INFO:root:current concordance index: 0.6493506494
+
+INFO:root:[9/10] current lr: 2.5119E-02
+INFO:root:current concordance index: 0.6363636364
+
+INFO:root:[10/10] current lr: 5.0119E-02
+INFO:root:current concordance index: 0.6446280992
+
+INFO:root:Optimal learning rate: 3.9811E-04, optimal c-index: 0.7284533648
+INFO:root:[Final] Apply model to training set: c-index: 0.6960949464, p-value: 2.6821430346e-04
+INFO:root:[Final] Apply model to testing set: c-index: 0.7284533648, p-value: 1.4545011714e-01
+INFO:root:[1/10] current lr: 1.0000E-04
+INFO:root:current concordance index: 0.5532934132
+
+INFO:root:[2/10] current lr: 1.9953E-04
+INFO:root:current concordance index: 0.6263473054
+
+INFO:root:[3/10] current lr: 3.9811E-04
+INFO:root:current concordance index: 0.7317365269
+
+INFO:root:[4/10] current lr: 7.9433E-04
+INFO:root:current concordance index: 0.6874251497
+
+INFO:root:[5/10] current lr: 1.5849E-03
+INFO:root:current concordance index: 0.6814371257
+
+INFO:root:[6/10] current lr: 3.1623E-03
+INFO:root:current concordance index: 0.6658682635
+
+INFO:root:[7/10] current lr: 6.3096E-03
+INFO:root:current concordance index: 0.6730538922
+
+INFO:root:[8/10] current lr: 1.2589E-02
+INFO:root:current concordance index: 0.6622754491
+
+INFO:root:[9/10] current lr: 2.5119E-02
+INFO:root:current concordance index: 0.6598802395
+
+INFO:root:[10/10] current lr: 5.0119E-02
+INFO:root:current concordance index: 0.6646706587
+
+INFO:root:Optimal learning rate: 3.9811E-04, optimal c-index: 0.7317365269
+INFO:root:[Final] Apply model to training set: c-index: 0.7134938112, p-value: 2.1782137660e-03
+INFO:root:[Final] Apply model to testing set: c-index: 0.7317365269, p-value: 2.0469551594e-02
+INFO:root:[1/10] current lr: 1.0000E-04
+INFO:root:current concordance index: 0.5443196005
+
+INFO:root:[2/10] current lr: 1.9953E-04
+INFO:root:current concordance index: 0.5780274657
+
+INFO:root:[3/10] current lr: 3.9811E-04
+INFO:root:current concordance index: 0.5855181024
+
+INFO:root:[4/10] current lr: 7.9433E-04
+INFO:root:current concordance index: 0.5368289638
+
+INFO:root:[5/10] current lr: 1.5849E-03
+INFO:root:current concordance index: 0.5255930087
+
+INFO:root:[6/10] current lr: 3.1623E-03
+INFO:root:current concordance index: 0.5280898876
+
+INFO:root:[7/10] current lr: 6.3096E-03
+INFO:root:current concordance index: 0.5305867665
+
+INFO:root:[8/10] current lr: 1.2589E-02
+INFO:root:current concordance index: 0.5230961298
+
+INFO:root:[9/10] current lr: 2.5119E-02
+INFO:root:current concordance index: 0.5343320849
+
+INFO:root:[10/10] current lr: 5.0119E-02
+INFO:root:current concordance index: 0.5480649189
+
+INFO:root:Optimal learning rate: 3.9811E-04, optimal c-index: 0.5855181024
+INFO:root:[Final] Apply model to training set: c-index: 0.7215754460, p-value: 4.6069668252e-05
+INFO:root:[Final] Apply model to testing set: c-index: 0.5855181024, p-value: 5.3608989215e-01
+INFO:root:[1/10] current lr: 1.0000E-04
+INFO:root:current concordance index: 0.6304635762
+
+INFO:root:[2/10] current lr: 1.9953E-04
+INFO:root:current concordance index: 0.6463576159
+
+INFO:root:[3/10] current lr: 3.9811E-04
+INFO:root:current concordance index: 0.6622516556
+
+INFO:root:[4/10] current lr: 7.9433E-04
+INFO:root:current concordance index: 0.6582781457
+
+INFO:root:[5/10] current lr: 1.5849E-03
+INFO:root:current concordance index: 0.6556291391
+
+INFO:root:[6/10] current lr: 3.1623E-03
+INFO:root:current concordance index: 0.6609271523
+
+INFO:root:[7/10] current lr: 6.3096E-03
+INFO:root:current concordance index: 0.6211920530
+
+INFO:root:[8/10] current lr: 1.2589E-02
+INFO:root:current concordance index: 0.5854304636
+
+INFO:root:[9/10] current lr: 2.5119E-02
+INFO:root:current concordance index: 0.5615894040
+
+INFO:root:[10/10] current lr: 5.0119E-02
+INFO:root:current concordance index: 0.6105960265
+
+INFO:root:Optimal learning rate: 3.9811E-04, optimal c-index: 0.6622516556
+INFO:root:[Final] Apply model to training set: c-index: 0.7175680716, p-value: 1.2187372219e-03
+INFO:root:[Final] Apply model to testing set: c-index: 0.6622516556, p-value: 1.2988674901e-01
