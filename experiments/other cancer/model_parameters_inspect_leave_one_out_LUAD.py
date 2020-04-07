@@ -68,9 +68,9 @@ for ix, (train_index, test_index) in enumerate(kf.split(data['x']), start = 1):
     datasets_5folds[ix]['train']['e'] = data['e'][train_index]
     datasets_5folds[ix]['train']['t'] = data['t'][train_index]
     datasets_5folds[ix]['test'] = {}
-    datasets_5folds[ix]['test']['x'] = data['x'][test_index, :]
-    datasets_5folds[ix]['test']['e'] = data['e'][test_index]
-    datasets_5folds[ix]['test']['t'] = data['t'][test_index]
+    datasets_5folds[ix]['test']['x'] = data['x'][train_index, :]
+    datasets_5folds[ix]['test']['e'] = data['e'][train_index]
+    datasets_5folds[ix]['test']['t'] = data['t'][train_index]
 
 
 length_of_data = {}

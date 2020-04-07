@@ -57,12 +57,12 @@ if __name__=='__main__':
     # model file
     num_epochs = args.num_epochs
     batch_size = args.batch_size
-    learning_rate_range = 10**np.arange(-4,-1,0.5)
+    learning_rate_range = 10**np.arange(-4,-1,0.3)
     cuda = True
     verbose = 0
     measure_while_training = True
     dropout_rate = 0
-    lambda_1 = 0 # L1
+    lambda_1 = 1e-6 # L1
     
     # 5-fold data
     tempdata = {}
@@ -134,9 +134,9 @@ if __name__=='__main__':
         datasets_5folds[ix]['train']['e'] = data['e'][train_index]
         datasets_5folds[ix]['train']['t'] = data['t'][train_index]
         datasets_5folds[ix]['test'] = {}
-        datasets_5folds[ix]['test']['x'] = data['x'][test_index, :]
-        datasets_5folds[ix]['test']['e'] = data['e'][test_index]
-        datasets_5folds[ix]['test']['t'] = data['t'][test_index]
+        datasets_5folds[ix]['test']['x'] = data['x'][train_index, :]
+        datasets_5folds[ix]['test']['e'] = data['e'][train_index]
+        datasets_5folds[ix]['test']['t'] = data['t'][train_index]
 
     for i in range(1, len(datasets_5folds) + 1):
         print("5 fold CV -- %d/5" % i)

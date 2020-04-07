@@ -38,10 +38,9 @@ import matplotlib.pyplot as plt
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset_dir', default='/home/zhihuan/Documents/20181115_Multiomic_AutoEncoder/Datasets_Multiomics/BRCA/Data_Preprocessing/Processed', help="datasets")
     parser.add_argument('--num_epochs', type=int, default=100, help="Number of epochs to train for. Default: 100")
     parser.add_argument('--measure_while_training', action='store_true', default=False, help='disables measure while training (make program faster)')
-    parser.add_argument('--batch_size', type=int, default=64, help="Number of batches to train/test for. Default: 256")
+    parser.add_argument('--batch_size', type=int, default=256, help="Number of batches to train/test for. Default: 256")
     parser.add_argument('--dataset', type=int, default=7)
     parser.add_argument('--nocuda', action='store_true', default=False, help='disables CUDA training')
     parser.add_argument('--verbose', default=1, type=int)
@@ -56,7 +55,7 @@ if __name__=='__main__':
     # model file
     num_epochs = args.num_epochs
     batch_size = args.batch_size
-    learning_rate_range = 10**np.arange(-3,-1,0.5)
+    learning_rate_range = 10**np.arange(-4,-1,0.3)
     cuda = True
     verbose = 0
     measure_while_training = True
@@ -104,6 +103,12 @@ if __name__=='__main__':
         len_of_tmb = 1
         len_of_clinical = 3
         
+        length_of_data = {}
+        length_of_data['mRNAseq'] = len_of_RNAseq
+        length_of_data['miRNAseq'] = len_of_miRNAseq
+        length_of_data['CNB'] = len_of_cnv
+        length_of_data['TMB'] = len_of_tmb
+        length_of_data['clinical'] = len_of_clinical
         
         if args.dataset == 1:
             ####      RNAseq Only
@@ -146,7 +151,7 @@ if __name__=='__main__':
             logging.info("[%d/%d] current lr: %.4E" %((j+1), len(learning_rate_range), lr))
             model, loss_nn_all, pvalue_all, c_index_all, c_index_list, acc_train_all, code_output = \
                  SALMON.train(datasets, num_epochs, batch_size, lr, dropout_rate,\
-                                         lambda_1, cuda, measure_while_training, verbose)
+                                         lambda_1, length_of_data, cuda, measure_while_training, verbose)
         
             epochs_list = range(num_epochs)
             plt.figure(figsize=(8,4))
@@ -158,7 +163,7 @@ if __name__=='__main__':
             plt.savefig(results_dir_dataset + "/convergence_%02d_lr=%.2E.png" % (j, lr),dpi=300)
             
             code_test, loss_nn_sum, acc_test, pvalue_pred, c_index_pred, lbl_pred_all, OS_event_test, OS_test = \
-                SALMON.test(model, datasets, 'test', batch_size, cuda, verbose)
+                SALMON.test(model, datasets, 'test', length_of_data, batch_size, cuda, verbose)
             ci_list.append(c_index_pred)
             print("current concordance index: ", c_index_pred,"\n")
             logging.info("current concordance index: %.10f\n" % c_index_pred)
@@ -175,14 +180,14 @@ if __name__=='__main__':
     
         model, loss_nn_all, pvalue_all, c_index_all, c_index_list, acc_train_all, code_output = \
                  SALMON.train(datasets, num_epochs, batch_size, optimal_lr, dropout_rate,\
-                                         lambda_1, cuda, measure_while_training, verbose)
+                                         lambda_1, length_of_data, cuda, measure_while_training, verbose)
         code_train, loss_nn_sum, acc_train, pvalue_pred, c_index_pred, lbl_pred_all_train, OS_event_train, OS_train = \
-            SALMON.test(model, datasets, 'train', batch_size, cuda, verbose)
+            SALMON.test(model, datasets, 'train', length_of_data, batch_size, cuda, verbose)
         print("[Final] Apply model to training set: c-index: %.10f, p-value: %.10e" % (c_index_pred, pvalue_pred))
         logging.info("[Final] Apply model to training set: c-index: %.10f, p-value: %.10e" % (c_index_pred, pvalue_pred))
     
         code_test, loss_nn_sum, acc_test, pvalue_pred, c_index_pred, lbl_pred_all_test, OS_event_test, OS_test = \
-            SALMON.test(model, datasets, 'test', batch_size, cuda, verbose)
+            SALMON.test(model, datasets, 'test', length_of_data, batch_size, cuda, verbose)
         print("[Final] Apply model to testing set: c-index: %.10f, p-value: %.10e" % (c_index_pred, pvalue_pred))
         logging.info("[Final] Apply model to testing set: c-index: %.10f, p-value: %.10e" % (c_index_pred, pvalue_pred))
                

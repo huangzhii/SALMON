@@ -258,9 +258,9 @@ def train(datasets, num_epochs, batch_size, learning_rate, dropout_rate,
     OS = torch.FloatTensor(t)
         
     
-    dataloader = DataLoader(X, batch_size=batch_size, num_workers=1, pin_memory=True, shuffle=False)
-    lblloader = DataLoader(OS_event, batch_size=batch_size, num_workers=1, pin_memory=True, shuffle=False)
-    OSloader = DataLoader(OS, batch_size=batch_size, num_workers=1, pin_memory=True, shuffle=False)
+    dataloader = DataLoader(X, batch_size=batch_size, num_workers=0, pin_memory=True, shuffle=False)
+    lblloader = DataLoader(OS_event, batch_size=batch_size, num_workers=0, pin_memory=True, shuffle=False)
+    OSloader = DataLoader(OS, batch_size=batch_size, num_workers=0, pin_memory=True, shuffle=False)
     
     
     
