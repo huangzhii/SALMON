@@ -5,7 +5,10 @@
 """
 
 import sys, os
-sys.path.append("/home/zhihuan/Documents/SALMON/model")
+from pathlib import Path
+project_folder = Path("..").resolve()
+model_folder = project_folder / "model"
+sys.path.append(model_folder.absolute().as_posix())
 import SALMON
 import pandas as pd
 import argparse
@@ -44,7 +47,8 @@ def parse_args():
     parser.add_argument('--dataset', type=int, default=7)
     parser.add_argument('--nocuda', action='store_true', default=False, help='disables CUDA training')
     parser.add_argument('--verbose', default=1, type=int)
-    parser.add_argument('--results_dir', default='/home/zhihuan/Documents/SALMON/experiments/Results', help="results dir")
+    parser.add_argument('--results_dir', default=(project_folder / "experiments/Results").absolute().as_posix(), help="results dir")
+
     return parser.parse_args()
 
 if __name__=='__main__':
@@ -79,8 +83,7 @@ if __name__=='__main__':
     elif args.dataset == 7:
         dataset_subset = "7_RNAseq+miRNAseq+cnv+tmb+clinical"
         
-    datasets_5folds = pickle.load( open( '/home/zhihuan/Documents/SALMON/data/BRCA_583_new/datasets_5folds.pickle', "rb" ) )
-
+    datasets_5folds = pickle.load( open( (project_folder / "data/BRCA_583_new/datasets_5folds.pickle").absolute().as_posix(), "rb" ) )
         
     for i in range(5):
         print("5 fold CV -- %d/5" % (i+1))
