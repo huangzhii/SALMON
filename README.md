@@ -19,6 +19,13 @@ conda install -c conda-forge imbalanced-learn
 conda install -c conda-forge lifelines
 ```
 
+### Alternative installation
+To install the libraries with the specified version, `requirements.txt` can be used as a configuration file with the following command:
+
+```bash
+pip install -r requirements.txt
+```
+
 ## 2. Run the main routine
 
 
