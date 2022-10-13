@@ -163,7 +163,7 @@ def CIndex(hazards, labels, survtime_all):
                 if survtime_all[j] > survtime_all[i]:
                     total = total + 1
                     if hazards[j] < hazards[i]: concord = concord + 1
-                    elif hazards[j] < hazards[i]: concord = concord + 0.5
+                    elif hazards[j] == hazards[i]: concord = concord + 0.5
 
     return(concord/total)
     
